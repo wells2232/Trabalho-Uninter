@@ -1,0 +1,480 @@
+{
+  "data": "2026-09-24",
+  "ambiente": "Node.js 24.21.0; Windows; SQLite em arquivo; gateway mock HTTP local",
+  "automatizados": {
+    "total": 18,
+    "aprovados": 18,
+    "falhas": 0
+  },
+  "postman": {
+    "requisicoes": {
+      "total": 31,
+      "pending": 0,
+      "failed": 0
+    },
+    "assercoes": {
+      "total": 66,
+      "pending": 0,
+      "failed": 0
+    },
+    "resultados": [
+      {
+        "cenario": "T01 Cadastrar cliente",
+        "status": 201,
+        "assercoes": [
+          {
+            "nome": "HTTP 201",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato perfil",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T02 Login cliente",
+        "status": 200,
+        "assercoes": [
+          {
+            "nome": "HTTP 200",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato tokenType",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T03 Login administrador",
+        "status": 200,
+        "assercoes": [
+          {
+            "nome": "HTTP 200",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T04 Consultar cardápio",
+        "status": 200,
+        "assercoes": [
+          {
+            "nome": "HTTP 200",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato data.0.precoCentavos",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T05 Aceitar consentimento",
+        "status": 200,
+        "assercoes": [
+          {
+            "nome": "HTTP 200",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato consentimento",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T06 Criar pedido TOTEM",
+        "status": 201,
+        "assercoes": [
+          {
+            "nome": "HTTP 201",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato totalCentavos",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T07 Repetir pedido com mesma chave",
+        "status": 200,
+        "assercoes": [
+          {
+            "nome": "HTTP 200",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato canalPedido",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T08 Filtrar pedidos por canal",
+        "status": 200,
+        "assercoes": [
+          {
+            "nome": "HTTP 200",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato data.0.canalPedido",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T09 Aprovar pagamento mock",
+        "status": 200,
+        "assercoes": [
+          {
+            "nome": "HTTP 200",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato pedido.status",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T10 Repetir pagamento com mesma chave",
+        "status": 200,
+        "assercoes": [
+          {
+            "nome": "HTTP 200",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato pagamento.status",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T11 Marcar como pronto",
+        "status": 200,
+        "assercoes": [
+          {
+            "nome": "HTTP 200",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato status",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T12 Confirmar entrega",
+        "status": 200,
+        "assercoes": [
+          {
+            "nome": "HTTP 200",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato status",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T13 Consultar pontos creditados",
+        "status": 200,
+        "assercoes": [
+          {
+            "nome": "HTTP 200",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato pontos",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T14 Verificar registro sensível",
+        "status": 200,
+        "assercoes": [
+          {
+            "nome": "HTTP 200",
+            "aprovada": true
+          },
+          {
+            "nome": "Entrega auditada",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T15 Acesso sem token",
+        "status": 401,
+        "assercoes": [
+          {
+            "nome": "HTTP 401",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato error",
+            "aprovada": true
+          },
+          {
+            "nome": "Erro padronizado",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T16 Cliente sem permissão",
+        "status": 403,
+        "assercoes": [
+          {
+            "nome": "HTTP 403",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato error",
+            "aprovada": true
+          },
+          {
+            "nome": "Erro padronizado",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T17 Canal ausente",
+        "status": 422,
+        "assercoes": [
+          {
+            "nome": "HTTP 422",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato error",
+            "aprovada": true
+          },
+          {
+            "nome": "Erro padronizado",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T18 Quantidade negativa",
+        "status": 422,
+        "assercoes": [
+          {
+            "nome": "HTTP 422",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato error",
+            "aprovada": true
+          },
+          {
+            "nome": "Erro padronizado",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T19 Produto inexistente",
+        "status": 404,
+        "assercoes": [
+          {
+            "nome": "HTTP 404",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato error",
+            "aprovada": true
+          },
+          {
+            "nome": "Erro padronizado",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T20 Cadastrar produto para teste de saldo",
+        "status": 201,
+        "assercoes": [
+          {
+            "nome": "HTTP 201",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T21 Entrar uma unidade no estoque",
+        "status": 201,
+        "assercoes": [
+          {
+            "nome": "HTTP 201",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato quantidade",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T22 Estoque insuficiente",
+        "status": 409,
+        "assercoes": [
+          {
+            "nome": "HTTP 409",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato error",
+            "aprovada": true
+          },
+          {
+            "nome": "Erro padronizado",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T23 Criar pedido com resgate",
+        "status": 201,
+        "assercoes": [
+          {
+            "nome": "HTTP 201",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato totalCentavos",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T24 Recusar pagamento e cancelar pedido",
+        "status": 200,
+        "assercoes": [
+          {
+            "nome": "HTTP 200",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato pedido.status",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T25 Verificar devolução dos pontos",
+        "status": 200,
+        "assercoes": [
+          {
+            "nome": "HTTP 200",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato pontos",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T26 Criar pedido para falha",
+        "status": 201,
+        "assercoes": [
+          {
+            "nome": "HTTP 201",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T27 Simular indisponibilidade",
+        "status": 503,
+        "assercoes": [
+          {
+            "nome": "HTTP 503",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato error",
+            "aprovada": true
+          },
+          {
+            "nome": "Erro padronizado",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T28 Cancelar pedido pendente",
+        "status": 200,
+        "assercoes": [
+          {
+            "nome": "HTTP 200",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato status",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T29 Revogar consentimento",
+        "status": 200,
+        "assercoes": [
+          {
+            "nome": "HTTP 200",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato consentimento",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T30 Anonimizar conta de teste",
+        "status": 204,
+        "assercoes": [
+          {
+            "nome": "HTTP 204",
+            "aprovada": true
+          }
+        ]
+      },
+      {
+        "cenario": "T31 Token da conta excluída é recusado",
+        "status": 401,
+        "assercoes": [
+          {
+            "nome": "HTTP 401",
+            "aprovada": true
+          },
+          {
+            "nome": "Contrato error",
+            "aprovada": true
+          },
+          {
+            "nome": "Erro padronizado",
+            "aprovada": true
+          }
+        ]
+      }
+    ]
+  },
+  "build": "Vite aprovado",
+  "interface": [
+    "Login",
+    "Adicionar item ao carrinho",
+    "Criar pedido WEB",
+    "Pagamento mock aprovado e pedido EM_PREPARO"
+  ]
+}

@@ -1,0 +1,4738 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Raízes do Nordeste",
+    "version": "1.0.0",
+    "description": "Valores monetários em centavos. JWT válido por uma hora. Clientes acessam apenas seus pedidos. Funcionários atuam na rede inteira neste MVP. Pagamento recusado cancela o pedido e devolve estoque/pontos. TIMEOUT simula indisponibilidade sem cobrança real."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "paths": {
+    "/auth/cadastro": {
+      "post": {
+        "operationId": "register",
+        "summary": "Cadastrar cliente",
+        "tags": [
+          "auth"
+        ],
+        "description": "Permissões: público.",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 6,
+                  "nome": "Maria Silva",
+                  "perfil": "CLIENTE"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 120
+                  },
+                  "email": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "format": "email",
+                    "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  },
+                  "senha": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 128
+                  }
+                },
+                "required": [
+                  "nome",
+                  "email",
+                  "senha"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "nome": "Maria Silva",
+                "email": "maria@example.com",
+                "senha": "Senha@123456"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "login",
+        "summary": "Autenticar usuário",
+        "tags": [
+          "auth"
+        ],
+        "description": "Permissões: público.",
+        "security": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "accessToken": "eyJ...",
+                  "tokenType": "Bearer",
+                  "expiresIn": 3600,
+                  "user": {
+                    "id": 5,
+                    "nome": "CLIENTE",
+                    "perfil": "CLIENTE"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "format": "email",
+                    "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  },
+                  "senha": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  }
+                },
+                "required": [
+                  "email",
+                  "senha"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "email": "cliente@raizes.local",
+                "senha": "Demo@123456"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usuarios/me": {
+      "get": {
+        "operationId": "profile",
+        "summary": "Consultar os próprios dados",
+        "tags": [
+          "usuarios"
+        ],
+        "description": "Permissões: qualquer usuário autenticado.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 5,
+                  "nome": "CLIENTE",
+                  "email": "cliente@raizes.local",
+                  "perfil": "CLIENTE",
+                  "consentimento": 0,
+                  "pontos": 0
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "anonymize",
+        "summary": "Anonimizar a própria conta e revogar o acesso",
+        "tags": [
+          "usuarios"
+        ],
+        "description": "Permissões: CLIENTE.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Sucesso"
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/unidades": {
+      "get": {
+        "operationId": "units",
+        "summary": "Listar unidades ativas",
+        "tags": [
+          "unidades"
+        ],
+        "description": "Permissões: público.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "id": 1,
+                      "nome": "Boa Viagem",
+                      "cidade": "Recife",
+                      "ativa": 1
+                    }
+                  ],
+                  "page": 1,
+                  "limit": 20,
+                  "total": 1
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createUnit",
+        "summary": "Cadastrar unidade",
+        "tags": [
+          "unidades"
+        ],
+        "description": "Permissões: GERENTE, ADMIN.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 3,
+                  "nome": "Centro",
+                  "cidade": "Recife",
+                  "ativa": 1
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 120
+                  },
+                  "cidade": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 120
+                  },
+                  "ativa": {
+                    "default": true,
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "nome",
+                  "cidade"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "nome": "Centro",
+                "cidade": "Recife",
+                "ativa": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/unidades/{id}": {
+      "put": {
+        "operationId": "updateUnit",
+        "summary": "Atualizar ou desativar unidade",
+        "tags": [
+          "unidades"
+        ],
+        "description": "Permissões: GERENTE, ADMIN.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 3,
+                  "nome": "Centro",
+                  "cidade": "Recife",
+                  "ativa": 0
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 120
+                  },
+                  "cidade": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 120
+                  },
+                  "ativa": {
+                    "default": true,
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "nome",
+                  "cidade"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "nome": "Centro",
+                "cidade": "Recife",
+                "ativa": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/unidades/{id}/cardapio": {
+      "get": {
+        "operationId": "menu",
+        "summary": "Consultar preços e disponibilidade por unidade",
+        "tags": [
+          "unidades"
+        ],
+        "description": "Permissões: público.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "id": 1,
+                      "nome": "Tapioca da casa",
+                      "descricao": "Carne de sol",
+                      "precoCentavos": 2490,
+                      "quantidade": 1000
+                    }
+                  ],
+                  "page": 1,
+                  "limit": 20,
+                  "total": 1
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/produtos": {
+      "get": {
+        "operationId": "products",
+        "summary": "Listar produtos do catálogo",
+        "tags": [
+          "produtos"
+        ],
+        "description": "Permissões: público.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "id": 1,
+                      "nome": "Tapioca da casa",
+                      "descricao": "Carne de sol",
+                      "ativo": 1
+                    }
+                  ],
+                  "page": 1,
+                  "limit": 20,
+                  "total": 1
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createProduct",
+        "summary": "Cadastrar produto",
+        "tags": [
+          "produtos"
+        ],
+        "description": "Permissões: GERENTE, ADMIN.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 4,
+                  "nome": "Bolo de milho",
+                  "descricao": "Fatia",
+                  "ativo": 1
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 120
+                  },
+                  "descricao": {
+                    "default": "",
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "ativo": {
+                    "default": true,
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "nome"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "nome": "Bolo de milho",
+                "descricao": "Fatia",
+                "ativo": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/produtos/{id}": {
+      "put": {
+        "operationId": "updateProduct",
+        "summary": "Atualizar ou desativar produto",
+        "tags": [
+          "produtos"
+        ],
+        "description": "Permissões: GERENTE, ADMIN.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 4,
+                  "nome": "Bolo de milho",
+                  "descricao": "Fatia",
+                  "ativo": 0
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 120
+                  },
+                  "descricao": {
+                    "default": "",
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "ativo": {
+                    "default": true,
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "nome"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "nome": "Bolo de milho",
+                "descricao": "Fatia",
+                "ativo": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/estoques": {
+      "get": {
+        "operationId": "stock",
+        "summary": "Consultar estoque por unidade",
+        "tags": [
+          "estoques"
+        ],
+        "description": "Permissões: ATENDENTE, COZINHA, GERENTE, ADMIN.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "unidadeId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "unidadeId": 1,
+                      "produtoId": 1,
+                      "precoCentavos": 2490,
+                      "quantidade": 1000
+                    }
+                  ],
+                  "page": 1,
+                  "limit": 20,
+                  "total": 1
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/estoques/movimentacoes": {
+      "post": {
+        "operationId": "moveStock",
+        "summary": "Registrar entrada ou saída e preço no cardápio",
+        "tags": [
+          "estoques"
+        ],
+        "description": "Permissões: GERENTE, ADMIN.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "unidadeId": 1,
+                  "produtoId": 1,
+                  "precoCentavos": 2490,
+                  "quantidade": 1010
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "unidadeId": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 2147483647
+                  },
+                  "produtoId": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 2147483647
+                  },
+                  "quantidade": {
+                    "type": "integer",
+                    "minimum": -100000,
+                    "maximum": 100000
+                  },
+                  "precoCentavos": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1000000
+                  },
+                  "motivo": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "unidadeId",
+                  "produtoId",
+                  "quantidade",
+                  "motivo"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "unidadeId": 1,
+                "produtoId": 1,
+                "quantidade": 10,
+                "precoCentavos": 2490,
+                "motivo": "Reposição"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos": {
+      "post": {
+        "operationId": "createOrder",
+        "summary": "Criar pedido e reservar estoque",
+        "tags": [
+          "pedidos"
+        ],
+        "description": "Permissões: CLIENTE, ATENDENTE, GERENTE, ADMIN. Idempotency-Key obrigatório (8–100 letras, números, hífen ou sublinhado). Repetição com dados diferentes retorna 409.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 100
+            },
+            "example": "pedido-demo-001"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Repetição idempotente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 1,
+                  "clienteId": 5,
+                  "unidadeId": 1,
+                  "canalPedido": "WEB",
+                  "status": "AGUARDANDO_PAGAMENTO",
+                  "subtotalCentavos": 2490,
+                  "descontoCentavos": 0,
+                  "totalCentavos": 2490,
+                  "pontosResgatados": 0,
+                  "createdAt": "2026-09-24T12:00:00Z",
+                  "itens": [
+                    {
+                      "produtoId": 1,
+                      "quantidade": 1,
+                      "precoCentavos": 2490
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 1,
+                  "clienteId": 5,
+                  "unidadeId": 1,
+                  "canalPedido": "WEB",
+                  "status": "AGUARDANDO_PAGAMENTO",
+                  "subtotalCentavos": 2490,
+                  "descontoCentavos": 0,
+                  "totalCentavos": 2490,
+                  "pontosResgatados": 0,
+                  "createdAt": "2026-09-24T12:00:00Z",
+                  "itens": [
+                    {
+                      "produtoId": 1,
+                      "quantidade": 1,
+                      "precoCentavos": 2490
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "unidadeId": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 2147483647
+                  },
+                  "canalPedido": {
+                    "type": "string",
+                    "enum": [
+                      "APP",
+                      "TOTEM",
+                      "BALCAO",
+                      "PICKUP",
+                      "WEB"
+                    ]
+                  },
+                  "itens": {
+                    "minItems": 1,
+                    "maxItems": 30,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "produtoId": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "maximum": 2147483647
+                        },
+                        "quantidade": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 100
+                        }
+                      },
+                      "required": [
+                        "produtoId",
+                        "quantidade"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "pontosResgatados": {
+                    "default": 0,
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 1000000
+                  }
+                },
+                "required": [
+                  "unidadeId",
+                  "canalPedido",
+                  "itens"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "unidadeId": 1,
+                "canalPedido": "WEB",
+                "itens": [
+                  {
+                    "produtoId": 1,
+                    "quantidade": 1
+                  }
+                ],
+                "pontosResgatados": 0
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "orders",
+        "summary": "Listar pedidos e filtrar por canal ou status",
+        "tags": [
+          "pedidos"
+        ],
+        "description": "Permissões: qualquer usuário autenticado.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "canalPedido",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "APP",
+                "TOTEM",
+                "BALCAO",
+                "PICKUP",
+                "WEB"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "AGUARDANDO_PAGAMENTO",
+                "EM_PREPARO",
+                "PRONTO",
+                "ENTREGUE",
+                "CANCELADO"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "id": 1,
+                      "clienteId": 5,
+                      "unidadeId": 1,
+                      "canalPedido": "WEB",
+                      "status": "AGUARDANDO_PAGAMENTO",
+                      "subtotalCentavos": 2490,
+                      "descontoCentavos": 0,
+                      "totalCentavos": 2490,
+                      "pontosResgatados": 0,
+                      "createdAt": "2026-09-24T12:00:00Z",
+                      "itens": [
+                        {
+                          "produtoId": 1,
+                          "quantidade": 1,
+                          "precoCentavos": 2490
+                        }
+                      ]
+                    }
+                  ],
+                  "page": 1,
+                  "limit": 20,
+                  "total": 1
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos/{id}": {
+      "get": {
+        "operationId": "order",
+        "summary": "Consultar pedido com itens",
+        "tags": [
+          "pedidos"
+        ],
+        "description": "Permissões: qualquer usuário autenticado.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 1,
+                  "clienteId": 5,
+                  "unidadeId": 1,
+                  "canalPedido": "WEB",
+                  "status": "AGUARDANDO_PAGAMENTO",
+                  "subtotalCentavos": 2490,
+                  "descontoCentavos": 0,
+                  "totalCentavos": 2490,
+                  "pontosResgatados": 0,
+                  "createdAt": "2026-09-24T12:00:00Z",
+                  "itens": [
+                    {
+                      "produtoId": 1,
+                      "quantidade": 1,
+                      "precoCentavos": 2490
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos/{id}/cancelamento": {
+      "post": {
+        "operationId": "cancel",
+        "summary": "Cancelar pedido ainda não pago e devolver a reserva",
+        "tags": [
+          "pedidos"
+        ],
+        "description": "Permissões: CLIENTE, ATENDENTE, GERENTE, ADMIN.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 1,
+                  "clienteId": 5,
+                  "unidadeId": 1,
+                  "canalPedido": "WEB",
+                  "status": "CANCELADO",
+                  "subtotalCentavos": 2490,
+                  "descontoCentavos": 0,
+                  "totalCentavos": 2490,
+                  "pontosResgatados": 0,
+                  "createdAt": "2026-09-24T12:00:00Z",
+                  "itens": [
+                    {
+                      "produtoId": 1,
+                      "quantidade": 1,
+                      "precoCentavos": 2490
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos/{id}/status": {
+      "patch": {
+        "operationId": "status",
+        "summary": "Atualizar preparo ou entrega",
+        "tags": [
+          "pedidos"
+        ],
+        "description": "Permissões: ATENDENTE, COZINHA, GERENTE, ADMIN.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 1,
+                  "clienteId": 5,
+                  "unidadeId": 1,
+                  "canalPedido": "WEB",
+                  "status": "PRONTO",
+                  "subtotalCentavos": 2490,
+                  "descontoCentavos": 0,
+                  "totalCentavos": 2490,
+                  "pontosResgatados": 0,
+                  "createdAt": "2026-09-24T12:00:00Z",
+                  "itens": [
+                    {
+                      "produtoId": 1,
+                      "quantidade": 1,
+                      "precoCentavos": 2490
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "PRONTO",
+                      "ENTREGUE"
+                    ]
+                  }
+                },
+                "required": [
+                  "status"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "status": "PRONTO"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pagamentos": {
+      "post": {
+        "operationId": "pay",
+        "summary": "Solicitar cobrança ao gateway mock",
+        "tags": [
+          "pagamentos"
+        ],
+        "description": "Permissões: CLIENTE, ATENDENTE, GERENTE, ADMIN. Idempotency-Key obrigatório (8–100 letras, números, hífen ou sublinhado). Repetição com dados diferentes retorna 409.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 100
+            },
+            "example": "pedido-demo-001"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "pagamento": {
+                    "id": 1,
+                    "pedidoId": 1,
+                    "status": "APROVADO",
+                    "valorCentavos": 2490,
+                    "payload": {
+                      "transacaoId": "abc123",
+                      "status": "APROVADO",
+                      "valorCentavos": 2490,
+                      "message": "Pagamento mock aprovado."
+                    },
+                    "createdAt": "2026-09-24T12:00:00Z"
+                  },
+                  "pedido": {
+                    "id": 1,
+                    "clienteId": 5,
+                    "unidadeId": 1,
+                    "canalPedido": "WEB",
+                    "status": "EM_PREPARO",
+                    "subtotalCentavos": 2490,
+                    "descontoCentavos": 0,
+                    "totalCentavos": 2490,
+                    "pontosResgatados": 0,
+                    "createdAt": "2026-09-24T12:00:00Z",
+                    "itens": [
+                      {
+                        "produtoId": 1,
+                        "quantidade": 1,
+                        "precoCentavos": 2490
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Gateway indisponível",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "GATEWAY_INDISPONIVEL",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "pedidoId": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 2147483647
+                  },
+                  "cenario": {
+                    "type": "string",
+                    "enum": [
+                      "APROVADO",
+                      "RECUSADO",
+                      "TIMEOUT"
+                    ]
+                  }
+                },
+                "required": [
+                  "pedidoId",
+                  "cenario"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "pedidoId": 1,
+                "cenario": "APROVADO"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos/{id}/pagamentos": {
+      "get": {
+        "operationId": "payments",
+        "summary": "Consultar tentativas de pagamento de um pedido",
+        "tags": [
+          "pedidos"
+        ],
+        "description": "Permissões: qualquer usuário autenticado.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "id": 1,
+                      "pedidoId": 1,
+                      "status": "APROVADO",
+                      "valorCentavos": 2490,
+                      "payload": {
+                        "status": "APROVADO"
+                      },
+                      "createdAt": "2026-09-24T12:00:00Z"
+                    }
+                  ],
+                  "page": 1,
+                  "limit": 20,
+                  "total": 1
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fidelidade/consentimento": {
+      "put": {
+        "operationId": "consent",
+        "summary": "Aceitar ou revogar participação na fidelidade",
+        "tags": [
+          "fidelidade"
+        ],
+        "description": "Permissões: qualquer usuário autenticado.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "consentimento": true,
+                  "versao": "1.0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "aceito": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "aceito"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "aceito": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fidelidade": {
+      "get": {
+        "operationId": "loyalty",
+        "summary": "Consultar saldo e histórico de pontos",
+        "tags": [
+          "fidelidade"
+        ],
+        "description": "Permissões: qualquer usuário autenticado.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "pontos": 24,
+                  "consentimento": 1,
+                  "historico": {
+                    "data": [
+                      {
+                        "id": 1,
+                        "pedidoId": 1,
+                        "pontos": 24,
+                        "motivo": "CREDITO_ENTREGA",
+                        "createdAt": "2026-09-24T12:00:00Z"
+                      }
+                    ],
+                    "page": 1,
+                    "limit": 20,
+                    "total": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auditorias": {
+      "get": {
+        "operationId": "audit",
+        "summary": "Consultar rastreabilidade das ações sensíveis",
+        "tags": [
+          "auditorias"
+        ],
+        "description": "Permissões: GERENTE, ADMIN.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "id": 1,
+                      "autorId": 5,
+                      "acao": "PEDIDO_CRIADO",
+                      "recurso": "1",
+                      "requestId": "uuid",
+                      "createdAt": "2026-09-24T12:00:00Z"
+                    }
+                  ],
+                  "page": 1,
+                  "limit": 20,
+                  "total": 1
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente/inválido ou credenciais inválidas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Perfil sem permissão ou pedido de outro cliente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso não encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito de negócio",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Corpo excede 32 KB",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "REGRA_DE_NEGOCIO",
+                  "message": "Descrição legível do problema.",
+                  "details": [],
+                  "timestamp": "2026-09-24T12:00:00Z",
+                  "path": "/pedidos",
+                  "requestId": "uuid"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

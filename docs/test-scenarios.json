@@ -1,0 +1,540 @@
+[
+  {
+    "id": "T01",
+    "group": "Auth",
+    "name": "Cadastrar cliente",
+    "method": "POST",
+    "path": "/auth/cadastro",
+    "status": 201,
+    "noauth": true,
+    "body": {
+      "nome": "Cliente de teste",
+      "email": "{{emailTeste}}",
+      "senha": "{{senha}}"
+    },
+    "check": [
+      "perfil",
+      "CLIENTE"
+    ]
+  },
+  {
+    "id": "T02",
+    "group": "Auth",
+    "name": "Login cliente",
+    "method": "POST",
+    "path": "/auth/login",
+    "status": 200,
+    "noauth": true,
+    "body": {
+      "email": "{{emailTeste}}",
+      "senha": "{{senha}}"
+    },
+    "save": [
+      "token",
+      "accessToken"
+    ],
+    "check": [
+      "tokenType",
+      "Bearer"
+    ]
+  },
+  {
+    "id": "T03",
+    "group": "Auth",
+    "name": "Login administrador",
+    "method": "POST",
+    "path": "/auth/login",
+    "status": 200,
+    "noauth": true,
+    "body": {
+      "email": "admin@raizes.local",
+      "senha": "{{senha}}"
+    },
+    "save": [
+      "adminToken",
+      "accessToken"
+    ]
+  },
+  {
+    "id": "T04",
+    "group": "Produtos",
+    "name": "Consultar cardápio",
+    "method": "GET",
+    "path": "/unidades/1/cardapio",
+    "status": 200,
+    "check": [
+      "data.0.precoCentavos",
+      2490
+    ]
+  },
+  {
+    "id": "T05",
+    "group": "Fidelidade",
+    "name": "Aceitar consentimento",
+    "method": "PUT",
+    "path": "/fidelidade/consentimento",
+    "status": 200,
+    "body": {
+      "aceito": true
+    },
+    "check": [
+      "consentimento",
+      true
+    ]
+  },
+  {
+    "id": "T06",
+    "group": "Pedidos",
+    "name": "Criar pedido TOTEM",
+    "method": "POST",
+    "path": "/pedidos",
+    "status": 201,
+    "body": {
+      "unidadeId": 1,
+      "canalPedido": "TOTEM",
+      "itens": [
+        {
+          "produtoId": 1,
+          "quantidade": 1
+        }
+      ],
+      "pontosResgatados": 0
+    },
+    "key": "{{runId}}-pedido",
+    "save": [
+      "pedidoId",
+      "id"
+    ],
+    "check": [
+      "totalCentavos",
+      2490
+    ]
+  },
+  {
+    "id": "T07",
+    "group": "Pedidos",
+    "name": "Repetir pedido com mesma chave",
+    "method": "POST",
+    "path": "/pedidos",
+    "status": 200,
+    "body": {
+      "unidadeId": 1,
+      "canalPedido": "TOTEM",
+      "itens": [
+        {
+          "produtoId": 1,
+          "quantidade": 1
+        }
+      ],
+      "pontosResgatados": 0
+    },
+    "key": "{{runId}}-pedido",
+    "check": [
+      "canalPedido",
+      "TOTEM"
+    ]
+  },
+  {
+    "id": "T08",
+    "group": "Pedidos",
+    "name": "Filtrar pedidos por canal",
+    "method": "GET",
+    "path": "/pedidos?canalPedido=TOTEM&limit=10",
+    "status": 200,
+    "check": [
+      "data.0.canalPedido",
+      "TOTEM"
+    ]
+  },
+  {
+    "id": "T09",
+    "group": "Pagamento",
+    "name": "Aprovar pagamento mock",
+    "method": "POST",
+    "path": "/pagamentos",
+    "status": 200,
+    "body": {
+      "pedidoId": "{{pedidoId}}",
+      "cenario": "APROVADO"
+    },
+    "key": "{{runId}}-pagamento",
+    "check": [
+      "pedido.status",
+      "EM_PREPARO"
+    ]
+  },
+  {
+    "id": "T10",
+    "group": "Pagamento",
+    "name": "Repetir pagamento com mesma chave",
+    "method": "POST",
+    "path": "/pagamentos",
+    "status": 200,
+    "body": {
+      "pedidoId": "{{pedidoId}}",
+      "cenario": "APROVADO"
+    },
+    "key": "{{runId}}-pagamento",
+    "check": [
+      "pagamento.status",
+      "APROVADO"
+    ]
+  },
+  {
+    "id": "T11",
+    "group": "Operação",
+    "name": "Marcar como pronto",
+    "method": "PATCH",
+    "path": "/pedidos/{{pedidoId}}/status",
+    "status": 200,
+    "admin": true,
+    "body": {
+      "status": "PRONTO"
+    },
+    "check": [
+      "status",
+      "PRONTO"
+    ]
+  },
+  {
+    "id": "T12",
+    "group": "Operação",
+    "name": "Confirmar entrega",
+    "method": "PATCH",
+    "path": "/pedidos/{{pedidoId}}/status",
+    "status": 200,
+    "admin": true,
+    "body": {
+      "status": "ENTREGUE"
+    },
+    "check": [
+      "status",
+      "ENTREGUE"
+    ]
+  },
+  {
+    "id": "T13",
+    "group": "Fidelidade",
+    "name": "Consultar pontos creditados",
+    "method": "GET",
+    "path": "/fidelidade",
+    "status": 200,
+    "check": [
+      "pontos",
+      24
+    ]
+  },
+  {
+    "id": "T14",
+    "group": "Auditoria",
+    "name": "Verificar registro sensível",
+    "method": "GET",
+    "path": "/auditorias?limit=100",
+    "status": 200,
+    "admin": true,
+    "script": "pm.test('Entrega auditada', () => pm.expect(body.data.some(row => row.acao === 'PEDIDO_ENTREGUE' && row.recurso === String(pm.collectionVariables.get('pedidoId')))).to.eql(true));"
+  },
+  {
+    "id": "T15",
+    "group": "Erros",
+    "name": "Acesso sem token",
+    "method": "GET",
+    "path": "/pedidos",
+    "status": 401,
+    "noauth": true,
+    "check": [
+      "error",
+      "NAO_AUTENTICADO"
+    ]
+  },
+  {
+    "id": "T16",
+    "group": "Erros",
+    "name": "Cliente sem permissão",
+    "method": "POST",
+    "path": "/produtos",
+    "status": 403,
+    "body": {
+      "nome": "Produto bloqueado"
+    },
+    "check": [
+      "error",
+      "SEM_PERMISSAO"
+    ]
+  },
+  {
+    "id": "T17",
+    "group": "Erros",
+    "name": "Canal ausente",
+    "method": "POST",
+    "path": "/pedidos",
+    "status": 422,
+    "body": {
+      "unidadeId": 1,
+      "itens": [
+        {
+          "produtoId": 1,
+          "quantidade": 1
+        }
+      ]
+    },
+    "key": "{{runId}}-sem-canal",
+    "check": [
+      "error",
+      "DADOS_INVALIDOS"
+    ]
+  },
+  {
+    "id": "T18",
+    "group": "Erros",
+    "name": "Quantidade negativa",
+    "method": "POST",
+    "path": "/pedidos",
+    "status": 422,
+    "body": {
+      "unidadeId": 1,
+      "canalPedido": "TOTEM",
+      "itens": [
+        {
+          "produtoId": 1,
+          "quantidade": -1
+        }
+      ],
+      "pontosResgatados": 0
+    },
+    "key": "{{runId}}-negativo",
+    "check": [
+      "error",
+      "DADOS_INVALIDOS"
+    ]
+  },
+  {
+    "id": "T19",
+    "group": "Erros",
+    "name": "Produto inexistente",
+    "method": "POST",
+    "path": "/pedidos",
+    "status": 404,
+    "body": {
+      "unidadeId": 1,
+      "canalPedido": "TOTEM",
+      "itens": [
+        {
+          "produtoId": 2147483647,
+          "quantidade": 1
+        }
+      ],
+      "pontosResgatados": 0
+    },
+    "key": "{{runId}}-inexistente",
+    "check": [
+      "error",
+      "PRODUTO_NAO_ENCONTRADO"
+    ]
+  },
+  {
+    "id": "T20",
+    "group": "Estoque",
+    "name": "Cadastrar produto para teste de saldo",
+    "method": "POST",
+    "path": "/produtos",
+    "status": 201,
+    "admin": true,
+    "body": {
+      "nome": "Produto teste de estoque"
+    },
+    "save": [
+      "produtoTeste",
+      "id"
+    ]
+  },
+  {
+    "id": "T21",
+    "group": "Estoque",
+    "name": "Entrar uma unidade no estoque",
+    "method": "POST",
+    "path": "/estoques/movimentacoes",
+    "status": 201,
+    "admin": true,
+    "body": {
+      "unidadeId": 1,
+      "produtoId": "{{produtoTeste}}",
+      "quantidade": 1,
+      "precoCentavos": 1000,
+      "motivo": "Teste de saldo"
+    },
+    "check": [
+      "quantidade",
+      1
+    ]
+  },
+  {
+    "id": "T22",
+    "group": "Erros",
+    "name": "Estoque insuficiente",
+    "method": "POST",
+    "path": "/pedidos",
+    "status": 409,
+    "body": {
+      "unidadeId": 1,
+      "canalPedido": "TOTEM",
+      "itens": [
+        {
+          "produtoId": "{{produtoTeste}}",
+          "quantidade": 2
+        }
+      ],
+      "pontosResgatados": 0
+    },
+    "key": "{{runId}}-sem-estoque",
+    "check": [
+      "error",
+      "ESTOQUE_INSUFICIENTE"
+    ]
+  },
+  {
+    "id": "T23",
+    "group": "Recusa",
+    "name": "Criar pedido com resgate",
+    "method": "POST",
+    "path": "/pedidos",
+    "status": 201,
+    "body": {
+      "unidadeId": 1,
+      "canalPedido": "TOTEM",
+      "itens": [
+        {
+          "produtoId": 1,
+          "quantidade": 1
+        }
+      ],
+      "pontosResgatados": 20
+    },
+    "key": "{{runId}}-recusa-pedido",
+    "save": [
+      "pedidoRecusa",
+      "id"
+    ],
+    "check": [
+      "totalCentavos",
+      2290
+    ]
+  },
+  {
+    "id": "T24",
+    "group": "Recusa",
+    "name": "Recusar pagamento e cancelar pedido",
+    "method": "POST",
+    "path": "/pagamentos",
+    "status": 200,
+    "body": {
+      "pedidoId": "{{pedidoRecusa}}",
+      "cenario": "RECUSADO"
+    },
+    "key": "{{runId}}-recusa-pagamento",
+    "check": [
+      "pedido.status",
+      "CANCELADO"
+    ]
+  },
+  {
+    "id": "T25",
+    "group": "Recusa",
+    "name": "Verificar devolução dos pontos",
+    "method": "GET",
+    "path": "/fidelidade",
+    "status": 200,
+    "check": [
+      "pontos",
+      24
+    ]
+  },
+  {
+    "id": "T26",
+    "group": "Falha do gateway",
+    "name": "Criar pedido para falha",
+    "method": "POST",
+    "path": "/pedidos",
+    "status": 201,
+    "body": {
+      "unidadeId": 1,
+      "canalPedido": "TOTEM",
+      "itens": [
+        {
+          "produtoId": 1,
+          "quantidade": 1
+        }
+      ],
+      "pontosResgatados": 0
+    },
+    "key": "{{runId}}-falha-pedido",
+    "save": [
+      "pedidoFalha",
+      "id"
+    ]
+  },
+  {
+    "id": "T27",
+    "group": "Falha do gateway",
+    "name": "Simular indisponibilidade",
+    "method": "POST",
+    "path": "/pagamentos",
+    "status": 503,
+    "body": {
+      "pedidoId": "{{pedidoFalha}}",
+      "cenario": "TIMEOUT"
+    },
+    "key": "{{runId}}-falha-pagamento",
+    "check": [
+      "error",
+      "GATEWAY_INDISPONIVEL"
+    ]
+  },
+  {
+    "id": "T28",
+    "group": "Falha do gateway",
+    "name": "Cancelar pedido pendente",
+    "method": "POST",
+    "path": "/pedidos/{{pedidoFalha}}/cancelamento",
+    "status": 200,
+    "check": [
+      "status",
+      "CANCELADO"
+    ]
+  },
+  {
+    "id": "T29",
+    "group": "Privacidade",
+    "name": "Revogar consentimento",
+    "method": "PUT",
+    "path": "/fidelidade/consentimento",
+    "status": 200,
+    "body": {
+      "aceito": false
+    },
+    "check": [
+      "consentimento",
+      false
+    ]
+  },
+  {
+    "id": "T30",
+    "group": "Privacidade",
+    "name": "Anonimizar conta de teste",
+    "method": "DELETE",
+    "path": "/usuarios/me",
+    "status": 204
+  },
+  {
+    "id": "T31",
+    "group": "Privacidade",
+    "name": "Token da conta excluída é recusado",
+    "method": "GET",
+    "path": "/usuarios/me",
+    "status": 401,
+    "check": [
+      "error",
+      "NAO_AUTENTICADO"
+    ]
+  }
+]
