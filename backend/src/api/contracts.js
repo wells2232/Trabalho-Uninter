@@ -334,7 +334,7 @@ export function openapi() {
       description:
         "Valores monetários em centavos. JWT válido por uma hora. Clientes acessam apenas seus pedidos. Funcionários atuam na rede inteira neste MVP. Pagamento recusado cancela o pedido e devolve estoque/pontos. TIMEOUT simula indisponibilidade sem cobrança real.",
     },
-    servers: [{ url: "http://localhost:3000" }],
+    servers: [{ url: "/" }],
     components: {
       securitySchemes: {
         bearerAuth: { type: "http", scheme: "bearer", bearerFormat: "JWT" },

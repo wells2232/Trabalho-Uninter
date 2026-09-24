@@ -11,8 +11,9 @@ const app = bootstrap(
   ),
   process.env.JWT_SECRET,
 );
-const server = app.listen(Number(process.env.PORT || 3000), "127.0.0.1", () =>
-  console.log("API disponível em http://localhost:3000/docs"),
+const port = Number(process.env.PORT || 3000);
+const server = app.listen(port, "127.0.0.1", () =>
+  console.log(`API disponível em http://localhost:${port}/docs`),
 );
 for (const signal of ["SIGINT", "SIGTERM"])
   process.on(signal, () =>

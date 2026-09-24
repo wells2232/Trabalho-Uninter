@@ -106,6 +106,7 @@ Alternativa pela linha de comando:
 npm exec --yes --package=newman -- newman run docs/raizes.postman_collection.json
 ```
 
+- [Checklist de conferência do roteiro](docs/checklist-roteiro.md)
 - [Plano com entradas, pré-condições e resultados](docs/plano-de-testes.md)
 - [Resultados verificados, sem tokens ou senhas](docs/evidencias.json)
 - [Contratos e exemplos de todos os endpoints](docs/endpoints.md)

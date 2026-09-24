@@ -476,5 +476,34 @@
     "Adicionar item ao carrinho",
     "Criar pedido WEB",
     "Pagamento mock aprovado e pedido EM_PREPARO"
-  ]
+  ],
+  "reproducaoCopiaPublica": {
+    "origem": "clone público do branch main",
+    "instalacao": "npm ci aprovado",
+    "migrations": "aplicadas em banco novo",
+    "seed": "aplicado",
+    "testes": {
+      "total": 18,
+      "falhas": 0
+    },
+    "postman": {
+      "requisicoes": 31,
+      "assercoes": 66,
+      "falhas": 0
+    },
+    "build": "aprovado"
+  },
+  "conferenciaRoteiro": {
+    "endpoints": 23,
+    "tabelas": 11,
+    "schemas": "iguais às migrations",
+    "openapi": "igual aos contratos executados",
+    "pdf": "todos os endpoints presentes",
+    "cenarios": {
+      "positivos": 23,
+      "negativos": 8,
+      "total": 31
+    },
+    "privacidade": "nenhum artefato acadêmico na árvore pública"
+  }
 }
