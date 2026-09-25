@@ -14,7 +14,11 @@ export async function api(path, options = {}) {
   });
   if (response.status === 204) return null;
   const data = await response.json();
-  if (!response.ok)
-    throw new Error(data.message || "Não foi possível concluir a operação.");
+  if (!response.ok) {
+    const error = new Error(data.message || "Não foi possível concluir a operação.");
+    error.code = data.error;
+    error.details = data.details || [];
+    throw error;
+  }
   return data;
 }

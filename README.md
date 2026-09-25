@@ -48,7 +48,7 @@ O cadastro público sempre cria CLIENTE. Funcionários são provisionados pelo s
 ## Fluxo para demonstrar
 
 1. Entre como cliente; opcionalmente aceite a fidelidade.
-2. Escolha a unidade, adicione itens e informe um canal.
+2. Escolha a unidade e adicione itens. O site envia automaticamente o canal `WEB`. Os demais canais podem ser demonstrados pelo Swagger e pela coleção Postman.
 3. Crie o pedido e simule o pagamento aprovado. A API move o pedido para `EM_PREPARO`.
 4. Entre como cozinha e marque `PRONTO`.
 5. Entre como atendente e confirme `ENTREGUE`.
@@ -136,3 +136,5 @@ Código e documentação: [wells2232/Trabalho-Uninter](https://github.com/wells2
 A coleção Postman, o OpenAPI e os diagramas técnicos estão na pasta `docs`. O Swagger executa localmente conforme as instruções acima. Não há API hospedada em produção.
 
 O relatório acadêmico e seus dados de identificação são mantidos apenas localmente e não integram este repositório público.
+
+O cadastro e o login exibem erros abaixo dos campos, incluindo senha curta no cadastro e e-mail já utilizado. O resgate no carrinho aparece apenas para participantes da fidelidade com saldo e respeita o limite de 50% do subtotal.

@@ -591,3 +591,11 @@ dialog .close {
     min-height: 150px;
   }
 }
+
+.field-error {
+  color: #a12622;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+.field-error:empty { display: none; }
+input[aria-invalid="true"] { border-color: #a12622; }

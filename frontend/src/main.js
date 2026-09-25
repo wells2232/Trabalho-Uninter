@@ -48,7 +48,7 @@ function render() {
     )
     .join("")}<span>APP · TOTEM · BALCÃO · PICKUP · WEB</span></nav>
   <div id="notice" role="status" aria-live="polite"></div><section id="content">${state.tab === "cardapio" ? menuView() : state.tab === "pedidos" ? ordersView() : loyaltyView()}</section>
-  <footer>Raízes do Nordeste <span>Projeto Multidisciplinar · 2026 · Pagamentos simulados</span></footer></main><dialog id="auth"><form id="auth-form"><button type="button" class="close text" data-action="close">✕</button><p class="eyebrow">BEM-VINDO À NOSSA MESA</p><h2>Entre na sua conta</h2><label class="register-only" hidden>Nome<input name="nome" autocomplete="name" maxlength="120"></label><label>E-mail<input name="email" type="email" autocomplete="username" required></label><label>Senha<input name="senha" type="password" autocomplete="current-password" required></label><p id="auth-error" role="alert"></p><button class="primary" type="submit">Entrar</button><button class="text" type="button" data-action="toggle-register">Ainda não tenho conta</button></form></dialog>`;
+  <footer>Raízes do Nordeste <span>Projeto Multidisciplinar · 2026 · Pagamentos simulados</span></footer></main><dialog id="auth"><form id="auth-form" novalidate><button type="button" class="close text" data-action="close">✕</button><p class="eyebrow">BEM-VINDO À NOSSA MESA</p><h2>Entre na sua conta</h2><label class="register-only" hidden>Nome<input name="nome" autocomplete="name" maxlength="120" aria-describedby="nome-error"><span id="nome-error" class="field-error" aria-live="polite"></span></label><label>E-mail<input name="email" type="email" autocomplete="username" required aria-describedby="email-error"><span id="email-error" class="field-error" aria-live="polite"></span></label><label>Senha<input name="senha" type="password" autocomplete="current-password" required aria-describedby="senha-error"><span id="senha-error" class="field-error" aria-live="polite"></span></label><p id="auth-error" role="alert"></p><button class="primary" type="submit">Entrar</button><button class="text" type="button" data-action="toggle-register">Ainda não tenho conta</button></form></dialog>`;
   bind();
 }
 function menuView() {
@@ -66,7 +66,7 @@ function menuView() {
           })
           .join("")
       : '<div class="empty"><span>＋</span><p>Escolha um sabor para começar.</p></div>'
-  }<label>Canal do pedido<select id="order-channel">${["WEB", "APP", "TOTEM", "BALCAO", "PICKUP"].map((v) => `<option>${v}</option>`).join("")}</select></label><label>Resgatar pontos<input id="points" type="number" min="0" step="1" value="0"></label><small>1 ponto = R$ 0,10. Limite de 50% do valor.</small><div class="cart-total"><span>Subtotal</span><strong>${money(total)}</strong></div><button class="primary" data-action="checkout" ${!state.cart.size ? "disabled" : ""}>${state.user ? "Criar pedido →" : "Entrar para pedir →"}</button><small class="cart-note">Você simula o pagamento na próxima etapa.</small></aside></div>`;
+  }${state.loyalty?.consentimento && state.loyalty.pontos > 0 ? `<label>Resgatar pontos<input id="points" type="number" min="0" max="${Math.min(state.loyalty.pontos, Math.floor(total / 20))}" step="1" value="0" aria-describedby="points-help points-error"><span id="points-error" class="field-error" aria-live="polite"></span></label><small id="points-help">Saldo: ${state.loyalty.pontos} pontos. Neste pedido: até ${Math.min(state.loyalty.pontos, Math.floor(total / 20))} pontos. Cada ponto vale R$ 0,10, limitado a 50% do subtotal.</small>` : ''}<div class="cart-total"><span>Subtotal</span><strong>${money(total)}</strong></div><button class="primary" data-action="checkout" ${!state.cart.size ? "disabled" : ""}>${state.user ? "Criar pedido →" : "Entrar para pedir →"}</button><small class="cart-note">Você simula o pagamento na próxima etapa.</small></aside></div>`;
 }
 function ordersView() {
   if (!state.user)
@@ -94,9 +94,17 @@ async function load() {
     state.orders = result.data;
     state.total = result.total;
   }
-  if (state.tab === "fidelidade" && state.user)
+  if (["fidelidade", "cardapio"].includes(state.tab) && state.user)
     state.loyalty = await api("/fidelidade?limit=20");
   render();
+}
+function setFieldError(form, name, message) {
+  form.querySelector(`#${name}-error`).textContent = message;
+  form.elements[name].setAttribute("aria-invalid", String(Boolean(message)));
+}
+function clearAuthErrors(form) {
+  for (const name of ["nome", "email", "senha"]) setFieldError(form, name, "");
+  form.querySelector("#auth-error").textContent = "";
 }
 function bind() {
   root.onclick = async (event) => {
@@ -145,21 +153,30 @@ function bind() {
         form.querySelector("[type=submit]").textContent = register
           ? "Cadastrar"
           : "Entrar";
-        form.elements.senha.minLength = register ? 10 : 1;
+        form.elements.senha.autocomplete = register ? "new-password" : "current-password";
+        clearAuthErrors(form);
         button.textContent = register
           ? "Já tenho uma conta"
           : "Ainda não tenho conta";
       }
       if (button.dataset.action === "checkout") {
         if (!state.user) return document.querySelector("#auth").showModal();
+        const pointsInput = document.querySelector("#points");
+        const points = pointsInput ? Number(pointsInput.value) : 0;
+        if (pointsInput && (!Number.isInteger(points) || points < 0 || points > Number(pointsInput.max))) {
+          document.querySelector("#points-error").textContent = `Informe um número inteiro entre 0 e ${pointsInput.max}.`;
+          pointsInput.setAttribute("aria-invalid", "true");
+          pointsInput.focus();
+          return;
+        }
         button.disabled = true;
         const pedido = await api("/pedidos", {
           method: "POST",
           headers: { "Idempotency-Key": crypto.randomUUID() },
           body: {
             unidadeId: state.unit,
-            canalPedido: document.querySelector("#order-channel").value,
-            pontosResgatados: Number(document.querySelector("#points").value),
+            canalPedido: "WEB",
+            pontosResgatados: points,
             itens: [...state.cart].map(([produtoId, quantidade]) => ({
               produtoId,
               quantidade,
@@ -241,13 +258,34 @@ function bind() {
         notify(error.message, true);
       }
     };
+  document.querySelector("#auth-form").oninput = (event) => {
+    const field = event.target;
+    if (field.name) setFieldError(event.currentTarget, field.name, "");
+    event.currentTarget.querySelector("#auth-error").textContent = "";
+  };
   document.querySelector("#auth-form").onsubmit = async (event) => {
     event.preventDefault();
     const form = event.target;
     const button = form.querySelector("[type=submit]");
+    clearAuthErrors(form);
+    const input = Object.fromEntries(new FormData(form));
+    input.nome = input.nome.trim();
+    input.email = input.email.trim();
+    const register = form.dataset.mode === "register";
+    const errors = {};
+    if (register && input.nome.length < 2) errors.nome = "Informe seu nome com pelo menos 2 caracteres.";
+    if (!input.email) errors.email = "Informe seu e-mail.";
+    else if (form.elements.email.validity.typeMismatch || input.email.length > 200) errors.email = "Informe um e-mail válido, como nome@exemplo.com.";
+    if (!input.senha) errors.senha = "Informe sua senha.";
+    else if (register && input.senha.length < 10) errors.senha = "A senha deve ter pelo menos 10 caracteres.";
+    else if (input.senha.length > 128) errors.senha = "A senha deve ter no máximo 128 caracteres.";
+    for (const [field, message] of Object.entries(errors)) setFieldError(form, field, message);
+    if (Object.keys(errors).length) {
+      form.elements[Object.keys(errors)[0]].focus();
+      return;
+    }
     button.disabled = true;
     try {
-      const input = Object.fromEntries(new FormData(form));
       if (form.dataset.mode === "register")
         await api("/auth/cadastro", { method: "POST", body: input });
       const session = await api("/auth/login", {
@@ -259,7 +297,15 @@ function bind() {
       await load();
       notify(`Bem-vindo, ${state.user.nome}.`);
     } catch (error) {
-      form.querySelector("#auth-error").textContent = error.message;
+      if (error.code === "EMAIL_EM_USO") {
+        setFieldError(form, "email", "Este e-mail já está sendo utilizado. Entre na sua conta ou use outro e-mail.");
+        form.elements.email.focus();
+      } else if (error.code === "CREDENCIAIS_INVALIDAS") {
+        setFieldError(form, "senha", "E-mail ou senha inválidos. Confira os dados e tente novamente.");
+        form.elements.senha.focus();
+      } else {
+        form.querySelector("#auth-error").textContent = error.message;
+      }
       button.disabled = false;
     }
   };
